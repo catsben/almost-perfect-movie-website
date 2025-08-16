@@ -53,7 +53,8 @@ class TMDbAPI {
   private imageBaseURL = TMDB_IMAGE_BASE_URL;
 
   private async fetchAPI(endpoint: string) {
-    const response = await fetch(`${this.baseURL}${endpoint}?api_key=${this.apiKey}`);
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const response = await fetch(`${this.baseURL}${endpoint}${separator}api_key=${this.apiKey}`);
     if (!response.ok) {
       throw new Error(`TMDb API error: ${response.statusText}`);
     }
