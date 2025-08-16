@@ -1,22 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import {
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Maximize,
-  Settings,
+import { 
+  Play, 
+  Pause, 
+  Volume2, 
+  VolumeX, 
+  Maximize, 
   Subtitles,
   Monitor,
   Cast,
-  RotateCcw,
   Minimize
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { tmdbAPI } from '@/lib/tmdb';
-import { useKeyboardControls } from '@/hooks/useKeyboardControls';
 
 interface VideoPlayerProps {
   tmdbId: number;
@@ -70,6 +67,18 @@ const VIDEO_SOURCES: VideoSource[] = [
     }
   },
   {
+    name: 'RG Shows',
+    getUrl: (tmdbId, imdbId, type, season, episode) => {
+      if (type === 'movie') {
+        return `https://embed.rgshows.me/movie/${tmdbId}`;
+      } else if (type === 'tv' && season && episode) {
+        return `https://embed.rgshows.me/tv/${tmdbId}/${season}/${episode}`;
+      } else {
+        return `https://embed.rgshows.me/tv/${tmdbId}`;
+      }
+    }
+  },
+  {
     name: 'MKV Embed',
     requiresImdb: true,
     getUrl: (tmdbId, imdbId, type, season, episode) => {
@@ -94,18 +103,6 @@ const VIDEO_SOURCES: VideoSource[] = [
         return `https://vidsrc.online/embed/tv?imdb=${imdbId}&s=${season}&e=${episode}`;
       } else {
         return `https://vidsrc.online/embed/tv?imdb=${imdbId}`;
-      }
-    }
-  },
-  {
-    name: 'RG Shows',
-    getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (type === 'movie') {
-        return `https://embed.rgshows.me/movie/${tmdbId}`;
-      } else if (type === 'tv' && season && episode) {
-        return `https://embed.rgshows.me/tv/${tmdbId}/${season}/${episode}`;
-      } else {
-        return `https://embed.rgshows.me/tv/${tmdbId}`;
       }
     }
   },
@@ -140,33 +137,10 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   const [subtitlesEnabled, setSubtitlesEnabled] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [imdbId, setImdbId] = useState<string | null>(null);
-  const [showSourceDropdown, setShowSourceDropdown] = useState(false);
   
   const playerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
-
-  // Keyboard controls
-  useKeyboardControls({
-    onTogglePlay: togglePlay,
-    onToggleMute: toggleMute,
-    onToggleFullscreen: toggleFullscreen,
-    onVolumeUp: () => handleVolumeChange([Math.min(100, volume[0] + 10)]),
-    onVolumeDown: () => handleVolumeChange([Math.max(0, volume[0] - 10)]),
-    onSeekForward: () => console.log('Seek forward 10s'),
-    onSeekBackward: () => console.log('Seek backward 10s'),
-    isEnabled: true
-  });
-
-  // Fullscreen change listener
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
 
   // Fetch IMDB ID for sources that require it
   useEffect(() => {
@@ -187,6 +161,16 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
     fetchImdbId();
   }, [tmdbId, type]);
 
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   // Get available sources (filter out IMDB-required sources if no IMDB ID)
   const availableSources = VIDEO_SOURCES.filter(source => 
     !source.requiresImdb || (source.requiresImdb && imdbId)
@@ -204,18 +188,15 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
-    // In a real implementation, you would control the iframe player
   };
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    // In a real implementation, you would control the iframe player
   };
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value);
     setIsMuted(value[0] === 0);
-    // In a real implementation, you would control the iframe player
   };
 
   const toggleFullscreen = () => {
@@ -231,25 +212,11 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   };
 
   const togglePictureInPicture = async () => {
-    if (!iframeRef.current) return;
-    
-    try {
-      if ('requestPictureInPicture' in HTMLVideoElement.prototype) {
-        // Note: PiP for iframes is limited, this is a placeholder
-        console.log('Picture-in-Picture requested');
-      }
-    } catch (error) {
-      console.error('PiP not supported or failed:', error);
-    }
+    console.log('Picture-in-Picture requested');
   };
 
   const castToDevice = () => {
-    // Placeholder for Chromecast functionality
-    if ('chrome' in window && 'cast' in (window as any).chrome) {
-      console.log('Casting to device...');
-    } else {
-      console.log('Chromecast not available');
-    }
+    console.log('Casting to device...');
   };
 
   const showControlsTemporarily = () => {
@@ -282,31 +249,31 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   }
 
   return (
-    <div
+    <div 
       ref={playerRef}
-      className="video-player-container group"
+      className="relative w-full bg-black rounded-lg overflow-hidden group"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      {/* Source Selection Dropdown */}
+      {/* Source Selection */}
       <div className="absolute top-4 right-4 z-20">
         <div className="bg-black/80 backdrop-blur-sm rounded-lg p-2">
-          <Select
-            value={currentSource.toString()}
-            onValueChange={(value) => switchSource(parseInt(value))}
-          >
-            <SelectTrigger className="w-40 h-8 text-xs text-white border-white/20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {availableSources.map((source, index) => (
-                <SelectItem key={source.name} value={index.toString()}>
-                  {source.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 flex-wrap">
+            {availableSources.map((source, index) => (
+              <button
+                key={source.name}
+                onClick={() => switchSource(index)}
+                className={`px-3 py-1 text-xs rounded transition-colors whitespace-nowrap ${
+                  currentSource === index
+                    ? 'bg-white text-black'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                {source.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -339,7 +306,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
         />
 
         {/* Custom Player Controls Overlay */}
-        <div className={`video-controls-overlay ${!showControls && !isLoading ? 'hidden' : ''}`}>
+        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-3 sm:p-6 transition-opacity duration-300 ${showControls || isLoading ? 'opacity-100' : 'opacity-0'}`}>
           {/* Progress Bar */}
           <div className="mb-4">
             <div className="w-full bg-white/20 rounded-full h-1 cursor-pointer">
@@ -348,16 +315,16 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
           </div>
 
           {/* Main Controls */}
-          <div className="video-controls-main flex items-center justify-between text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-white gap-4">
             {/* Left Controls */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={togglePlay}
                 className="text-white hover:bg-white/20"
               >
-                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                {isPlaying ? <Pause className="h-4 w-4 sm:h-5 sm:w-5" /> : <Play className="h-4 w-4 sm:h-5 sm:w-5" />}
               </Button>
 
               <div className="flex items-center space-x-2">
@@ -369,7 +336,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 >
                   {isMuted || volume[0] === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                 </Button>
-                <div className="w-20">
+                <div className="w-16 sm:w-20 hidden sm:block">
                   <Slider
                     value={volume}
                     onValueChange={handleVolumeChange}
@@ -380,16 +347,16 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 </div>
               </div>
 
-              <div className="text-sm">
+              <div className="text-xs sm:text-sm hidden sm:block">
                 <span>0:30 / 2:15:45</span>
               </div>
             </div>
 
             {/* Right Controls */}
-            <div className="video-controls-right flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap gap-2">
               {/* Quality Selector */}
               <Select value={quality} onValueChange={setQuality}>
-                <SelectTrigger className="w-20 h-8 text-xs text-white border-white/20">
+                <SelectTrigger className="w-16 sm:w-20 h-6 sm:h-8 text-xs text-white border-white/20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -401,7 +368,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
 
               {/* Speed Selector */}
               <Select value={speed} onValueChange={setSpeed}>
-                <SelectTrigger className="w-16 h-8 text-xs text-white border-white/20">
+                <SelectTrigger className="w-12 sm:w-16 h-6 sm:h-8 text-xs text-white border-white/20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -418,7 +385,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 onClick={() => setSubtitlesEnabled(!subtitlesEnabled)}
                 className={`text-white hover:bg-white/20 ${subtitlesEnabled ? 'bg-white/20' : ''}`}
               >
-                <Subtitles className="h-4 w-4" />
+                <Subtitles className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
 
               {/* Picture-in-Picture */}
@@ -428,7 +395,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 onClick={togglePictureInPicture}
                 className="text-white hover:bg-white/20"
               >
-                <Monitor className="h-4 w-4" />
+                <Monitor className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
 
               {/* Chromecast */}
@@ -438,7 +405,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 onClick={castToDevice}
                 className="text-white hover:bg-white/20"
               >
-                <Cast className="h-4 w-4" />
+                <Cast className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
 
               {/* Fullscreen */}
@@ -449,28 +416,28 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 className="text-white hover:bg-white/20"
                 title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen (F)'}
               >
-                {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                {isFullscreen ? <Minimize className="h-3 w-3 sm:h-4 sm:w-4" /> : <Maximize className="h-3 w-3 sm:h-4 sm:w-4" />}
               </Button>
             </div>
           </div>
 
           {/* Video Info */}
-          <div className="mt-3 flex justify-between items-center text-sm text-white/80">
-            <div>
+          <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm text-white/80 gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-medium">{title}</span>
-              <span className="ml-2">• {currentSourceData.name}</span>
-              <span className="ml-2">• {quality}</span>
-              {subtitlesEnabled && <span className="ml-2">• Subtitles</span>}
+              <span>• {currentSourceData.name}</span>
+              <span>• {quality}</span>
+              {subtitlesEnabled && <span>• Subtitles</span>}
             </div>
-            <div className="text-xs">
+            <div className="text-xs hidden sm:block">
               Press F for fullscreen • Space to play/pause
             </div>
           </div>
         </div>
       </div>
 
-      {/* Keyboard Shortcuts Info */}
-      <div className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Mobile-friendly keyboard shortcuts info */}
+      <div className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
         <div className="bg-black/70 backdrop-blur-sm rounded-lg p-2 text-xs text-white">
           <div className="space-y-1">
             <div>Space: Play/Pause</div>

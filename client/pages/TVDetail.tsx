@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Star, Calendar, Tv2, Heart, Play, Plus } from 'lucide-react';
 import { useTVShowDetails, useTVShowCredits } from '@/hooks/useTMDb';
-import { VideoPlayerSimple as VideoPlayer } from '@/components/VideoPlayerSimple';
+import { VideoPlayer } from '@/components/VideoPlayer';
 import { CastMember } from '@/components/CastMember';
 import { ScrollableRow } from '@/components/ScrollableRow';
 import { Button } from '@/components/ui/button';
