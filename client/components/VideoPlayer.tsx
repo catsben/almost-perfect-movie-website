@@ -1,20 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Maximize, 
-  Settings, 
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  Settings,
   Subtitles,
   Monitor,
   Cast,
-  RotateCcw
+  RotateCcw,
+  Minimize
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { tmdbAPI } from '@/lib/tmdb';
+import { useKeyboardControls } from '@/hooks/useKeyboardControls';
 
 interface VideoPlayerProps {
   tmdbId: number;
@@ -144,6 +146,28 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // Keyboard controls
+  useKeyboardControls({
+    onTogglePlay: togglePlay,
+    onToggleMute: toggleMute,
+    onToggleFullscreen: toggleFullscreen,
+    onVolumeUp: () => handleVolumeChange([Math.min(100, volume[0] + 10)]),
+    onVolumeDown: () => handleVolumeChange([Math.max(0, volume[0] - 10)]),
+    onSeekForward: () => console.log('Seek forward 10s'),
+    onSeekBackward: () => console.log('Seek backward 10s'),
+    isEnabled: true
+  });
+
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   // Fetch IMDB ID for sources that require it
   useEffect(() => {
     const fetchImdbId = async () => {
@@ -258,9 +282,9 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   }
 
   return (
-    <div 
+    <div
       ref={playerRef}
-      className="relative w-full bg-black rounded-lg overflow-hidden group"
+      className="video-player-container group"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
@@ -315,7 +339,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
         />
 
         {/* Custom Player Controls Overlay */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 transition-opacity duration-300 ${showControls || isLoading ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`video-controls-overlay ${!showControls && !isLoading ? 'hidden' : ''}`}>
           {/* Progress Bar */}
           <div className="mb-4">
             <div className="w-full bg-white/20 rounded-full h-1 cursor-pointer">
@@ -324,7 +348,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
           </div>
 
           {/* Main Controls */}
-          <div className="flex items-center justify-between text-white">
+          <div className="video-controls-main flex items-center justify-between text-white">
             {/* Left Controls */}
             <div className="flex items-center space-x-4">
               <Button
@@ -362,7 +386,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
             </div>
 
             {/* Right Controls */}
-            <div className="flex items-center space-x-2">
+            <div className="video-controls-right flex items-center space-x-2">
               {/* Quality Selector */}
               <Select value={quality} onValueChange={setQuality}>
                 <SelectTrigger className="w-20 h-8 text-xs text-white border-white/20">
@@ -423,8 +447,9 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 size="sm"
                 onClick={toggleFullscreen}
                 className="text-white hover:bg-white/20"
+                title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen (F)'}
               >
-                <Maximize className="h-4 w-4" />
+                {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
               </Button>
             </div>
           </div>
