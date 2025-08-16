@@ -74,10 +74,26 @@ export function useMovieCredits(movieId: number) {
   });
 }
 
+export function useMovieExternalIds(movieId: number) {
+  return useQuery({
+    queryKey: ['movie', movieId, 'external_ids'],
+    queryFn: () => tmdbAPI.getMovieExternalIds(movieId),
+    enabled: !!movieId,
+  });
+}
+
 export function useTVShowCredits(tvId: number) {
   return useQuery({
     queryKey: ['tv', tvId, 'credits'],
     queryFn: () => tmdbAPI.getTVShowCredits(tvId),
+    enabled: !!tvId,
+  });
+}
+
+export function useTVShowExternalIds(tvId: number) {
+  return useQuery({
+    queryKey: ['tv', tvId, 'external_ids'],
+    queryFn: () => tmdbAPI.getTVShowExternalIds(tvId),
     enabled: !!tvId,
   });
 }
