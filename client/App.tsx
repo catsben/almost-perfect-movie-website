@@ -10,6 +10,8 @@ import { Layout } from "./components/Layout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { Placeholder } from "./pages/Placeholder";
+import MovieDetail from "./pages/MovieDetail";
+import TVDetail from "./pages/TVDetail";
 import { queryClient } from "./lib/query-client";
 
 const App = () => (
@@ -29,8 +31,8 @@ const App = () => (
             <Route path="live-tv" element={<Placeholder title="Live TV" />} />
             <Route path="watchlist" element={<Placeholder title="Watchlist" />} />
             <Route path="history" element={<Placeholder title="History" />} />
-            <Route path="movie/:id" element={<Placeholder title="Movie Details" />} />
-            <Route path="tv/:id" element={<Placeholder title="TV Show Details" />} />
+            <Route path="movie/:id" element={<MovieDetail />} />
+            <Route path="tv/:id" element={<TVDetail />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

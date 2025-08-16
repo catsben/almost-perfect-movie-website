@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { SearchBar } from './SearchBar';
 import { cn } from '@/lib/utils';
@@ -49,13 +49,13 @@ export function Layout() {
                         { name: 'History', href: '/history' },
                       ].map((item) => (
                         <li key={item.name}>
-                          <a
-                            href={item.href}
+                          <Link
+                            to={item.href}
                             className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                             onClick={() => setSidebarOpen(false)}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                     </ul>
