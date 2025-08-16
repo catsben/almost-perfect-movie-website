@@ -3,7 +3,6 @@ import "./global.css";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
@@ -23,28 +22,26 @@ import { queryClient } from "./lib/query-client";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Index />} />
-            <Route path="search" element={<Search />} />
-            <Route path="movies" element={<Movies />} />
-            <Route path="tv" element={<TVShows />} />
-            <Route path="anime" element={<Anime />} />
-            <Route path="k-drama" element={<KDrama />} />
-            <Route path="live-tv" element={<Placeholder title="Live TV" />} />
-            <Route path="watchlist" element={<Watchlist />} />
-            <Route path="history" element={<History />} />
-            <Route path="movie/:id" element={<MovieDetail />} />
-            <Route path="tv/:id" element={<TVDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <Toaster />
+    <Sonner />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Index />} />
+          <Route path="search" element={<Search />} />
+          <Route path="movies" element={<Movies />} />
+          <Route path="tv" element={<TVShows />} />
+          <Route path="anime" element={<Anime />} />
+          <Route path="k-drama" element={<KDrama />} />
+          <Route path="live-tv" element={<Placeholder title="Live TV" />} />
+          <Route path="watchlist" element={<Watchlist />} />
+          <Route path="history" element={<History />} />
+          <Route path="movie/:id" element={<MovieDetail />} />
+          <Route path="tv/:id" element={<TVDetail />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
