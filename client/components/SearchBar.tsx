@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface SearchBarProps {
   onMenuClick?: () => void;
 }
 
 export function SearchBar({ onMenuClick }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,7 +35,10 @@ export function SearchBar({ onMenuClick }: SearchBarProps) {
         <form className="relative flex flex-1" onSubmit={handleSubmit}>
           <div className="relative w-full max-w-lg">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              <Search
+                className="h-5 w-5 text-muted-foreground"
+                aria-hidden="true"
+              />
             </div>
             <Input
               className="block w-full rounded-md border-0 bg-input py-1.5 pl-10 pr-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"

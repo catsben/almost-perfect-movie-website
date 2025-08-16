@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { ReactNode } from "react";
+import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface SectionProps {
   title: string;
@@ -10,7 +10,12 @@ interface SectionProps {
   className?: string;
 }
 
-export function Section({ title, children, viewAllLink, className }: SectionProps) {
+export function Section({
+  title,
+  children,
+  viewAllLink,
+  className,
+}: SectionProps) {
   return (
     <section className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">

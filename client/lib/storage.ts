@@ -1,6 +1,6 @@
 export interface WatchlistItem {
   id: number;
-  type: 'movie' | 'tv';
+  type: "movie" | "tv";
   title: string;
   poster_path: string | null;
   release_date: string;
@@ -13,8 +13,8 @@ export interface HistoryItem extends WatchlistItem {
   progress?: number; // percentage watched
 }
 
-const WATCHLIST_KEY = 'streamflix_watchlist';
-const HISTORY_KEY = 'streamflix_history';
+const WATCHLIST_KEY = "streamflix_watchlist";
+const HISTORY_KEY = "streamflix_history";
 
 export class StorageManager {
   // Watchlist methods
@@ -27,10 +27,12 @@ export class StorageManager {
     }
   }
 
-  static addToWatchlist(item: Omit<WatchlistItem, 'addedAt'>): void {
+  static addToWatchlist(item: Omit<WatchlistItem, "addedAt">): void {
     const watchlist = this.getWatchlist();
-    const exists = watchlist.find(w => w.id === item.id && w.type === item.type);
-    
+    const exists = watchlist.find(
+      (w) => w.id === item.id && w.type === item.type,
+    );
+
     if (!exists) {
       const newItem: WatchlistItem = {
         ...item,
@@ -41,15 +43,17 @@ export class StorageManager {
     }
   }
 
-  static removeFromWatchlist(id: number, type: 'movie' | 'tv'): void {
+  static removeFromWatchlist(id: number, type: "movie" | "tv"): void {
     const watchlist = this.getWatchlist();
-    const filtered = watchlist.filter(item => !(item.id === id && item.type === type));
+    const filtered = watchlist.filter(
+      (item) => !(item.id === id && item.type === type),
+    );
     localStorage.setItem(WATCHLIST_KEY, JSON.stringify(filtered));
   }
 
-  static isInWatchlist(id: number, type: 'movie' | 'tv'): boolean {
+  static isInWatchlist(id: number, type: "movie" | "tv"): boolean {
     const watchlist = this.getWatchlist();
-    return watchlist.some(item => item.id === id && item.type === type);
+    return watchlist.some((item) => item.id === id && item.type === type);
   }
 
   // History methods
@@ -62,10 +66,15 @@ export class StorageManager {
     }
   }
 
-  static addToHistory(item: Omit<HistoryItem, 'addedAt' | 'watchedAt'>, progress = 0): void {
+  static addToHistory(
+    item: Omit<HistoryItem, "addedAt" | "watchedAt">,
+    progress = 0,
+  ): void {
     const history = this.getHistory();
-    const existingIndex = history.findIndex(h => h.id === item.id && h.type === item.type);
-    
+    const existingIndex = history.findIndex(
+      (h) => h.id === item.id && h.type === item.type,
+    );
+
     const newItem: HistoryItem = {
       ...item,
       addedAt: new Date().toISOString(),
@@ -89,9 +98,11 @@ export class StorageManager {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }
 
-  static removeFromHistory(id: number, type: 'movie' | 'tv'): void {
+  static removeFromHistory(id: number, type: "movie" | "tv"): void {
     const history = this.getHistory();
-    const filtered = history.filter(item => !(item.id === id && item.type === type));
+    const filtered = history.filter(
+      (item) => !(item.id === id && item.type === type),
+    );
     localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
   }
 

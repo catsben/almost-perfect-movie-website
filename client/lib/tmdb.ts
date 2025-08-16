@@ -53,8 +53,10 @@ class TMDbAPI {
   private imageBaseURL = TMDB_IMAGE_BASE_URL;
 
   private async fetchAPI(endpoint: string) {
-    const separator = endpoint.includes('?') ? '&' : '?';
-    const response = await fetch(`${this.baseURL}${endpoint}${separator}api_key=${this.apiKey}`);
+    const separator = endpoint.includes("?") ? "&" : "?";
+    const response = await fetch(
+      `${this.baseURL}${endpoint}${separator}api_key=${this.apiKey}`,
+    );
     if (!response.ok) {
       throw new Error(`TMDb API error: ${response.statusText}`);
     }
@@ -62,7 +64,7 @@ class TMDbAPI {
   }
 
   // Movie endpoints
-  async getTrendingMovies(timeWindow: 'day' | 'week' = 'week') {
+  async getTrendingMovies(timeWindow: "day" | "week" = "week") {
     return this.fetchAPI(`/trending/movie/${timeWindow}`);
   }
 
@@ -91,7 +93,7 @@ class TMDbAPI {
   }
 
   // TV Show endpoints
-  async getTrendingTVShows(timeWindow: 'day' | 'week' = 'week') {
+  async getTrendingTVShows(timeWindow: "day" | "week" = "week") {
     return this.fetchAPI(`/trending/tv/${timeWindow}`);
   }
 
@@ -117,63 +119,79 @@ class TMDbAPI {
 
   // Search endpoints
   async searchMulti(query: string, page = 1) {
-    return this.fetchAPI(`/search/multi?query=${encodeURIComponent(query)}&page=${page}`);
+    return this.fetchAPI(
+      `/search/multi?query=${encodeURIComponent(query)}&page=${page}`,
+    );
   }
 
   async searchMovies(query: string, page = 1) {
-    return this.fetchAPI(`/search/movie?query=${encodeURIComponent(query)}&page=${page}`);
+    return this.fetchAPI(
+      `/search/movie?query=${encodeURIComponent(query)}&page=${page}`,
+    );
   }
 
   async searchTVShows(query: string, page = 1) {
-    return this.fetchAPI(`/search/tv?query=${encodeURIComponent(query)}&page=${page}`);
+    return this.fetchAPI(
+      `/search/tv?query=${encodeURIComponent(query)}&page=${page}`,
+    );
   }
 
   // Genres
   async getMovieGenres() {
-    return this.fetchAPI('/genre/movie/list');
+    return this.fetchAPI("/genre/movie/list");
   }
 
   async getTVGenres() {
-    return this.fetchAPI('/genre/tv/list');
+    return this.fetchAPI("/genre/tv/list");
   }
 
   // Discover endpoints for categories
-  async discoverMovies(params: {
-    with_genres?: string;
-    with_keywords?: string;
-    page?: number;
-    sort_by?: string;
-  } = {}) {
+  async discoverMovies(
+    params: {
+      with_genres?: string;
+      with_keywords?: string;
+      page?: number;
+      sort_by?: string;
+    } = {},
+  ) {
     const queryParams = new URLSearchParams({
       page: (params.page || 1).toString(),
-      sort_by: params.sort_by || 'popularity.desc',
-      ...params
+      sort_by: params.sort_by || "popularity.desc",
+      ...params,
     });
     return this.fetchAPI(`/discover/movie?${queryParams}`);
   }
 
-  async discoverTVShows(params: {
-    with_genres?: string;
-    with_keywords?: string;
-    page?: number;
-    sort_by?: string;
-  } = {}) {
+  async discoverTVShows(
+    params: {
+      with_genres?: string;
+      with_keywords?: string;
+      page?: number;
+      sort_by?: string;
+    } = {},
+  ) {
     const queryParams = new URLSearchParams({
       page: (params.page || 1).toString(),
-      sort_by: params.sort_by || 'popularity.desc',
-      ...params
+      sort_by: params.sort_by || "popularity.desc",
+      ...params,
     });
     return this.fetchAPI(`/discover/tv?${queryParams}`);
   }
 
   // Helper methods for image URLs
-  getImageURL(path: string, size: 'w200' | 'w300' | 'w400' | 'w500' | 'w780' | 'original' = 'w500') {
-    if (!path) return '/placeholder.svg';
+  getImageURL(
+    path: string,
+    size: "w200" | "w300" | "w400" | "w500" | "w780" | "original" = "w500",
+  ) {
+    if (!path) return "/placeholder.svg";
     return `${this.imageBaseURL}/${size}${path}`;
   }
 
-  getBackdropURL(path: string, size: 'w300' | 'w780' | 'w1280' | 'original' = 'w1280') {
-    if (!path) return '/placeholder.svg';
+  getBackdropURL(
+    path: string,
+    size: "w300" | "w780" | "w1280" | "original" = "w1280",
+  ) {
+    if (!path) return "/placeholder.svg";
     return `${this.imageBaseURL}/${size}${path}`;
   }
 }

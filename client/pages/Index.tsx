@@ -1,8 +1,13 @@
-import { Section } from '@/components/Section';
-import { ScrollableRow } from '@/components/ScrollableRow';
-import { MovieCard } from '@/components/MovieCard';
-import { useTrendingMovies, useTrendingTVShows, usePopularMovies, usePopularTVShows } from '@/hooks/useTMDb';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Section } from "@/components/Section";
+import { ScrollableRow } from "@/components/ScrollableRow";
+import { MovieCard } from "@/components/MovieCard";
+import {
+  useTrendingMovies,
+  useTrendingTVShows,
+  usePopularMovies,
+  usePopularTVShows,
+} from "@/hooks/useTMDb";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function LoadingSkeleton() {
   return (
@@ -17,9 +22,12 @@ function LoadingSkeleton() {
 }
 
 export default function Index() {
-  const { data: trendingMovies, isLoading: loadingTrendingMovies } = useTrendingMovies();
-  const { data: trendingTV, isLoading: loadingTrendingTV } = useTrendingTVShows();
-  const { data: popularMovies, isLoading: loadingPopularMovies } = usePopularMovies();
+  const { data: trendingMovies, isLoading: loadingTrendingMovies } =
+    useTrendingMovies();
+  const { data: trendingTV, isLoading: loadingTrendingTV } =
+    useTrendingTVShows();
+  const { data: popularMovies, isLoading: loadingPopularMovies } =
+    usePopularMovies();
   const { data: popularTV, isLoading: loadingPopularTV } = usePopularTVShows();
 
   return (

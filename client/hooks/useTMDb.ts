@@ -1,58 +1,58 @@
-import { useQuery } from '@tanstack/react-query';
-import { tmdbAPI } from '@/lib/tmdb';
+import { useQuery } from "@tanstack/react-query";
+import { tmdbAPI } from "@/lib/tmdb";
 
-export function useTrendingMovies(timeWindow: 'day' | 'week' = 'week') {
+export function useTrendingMovies(timeWindow: "day" | "week" = "week") {
   return useQuery({
-    queryKey: ['trending', 'movies', timeWindow],
+    queryKey: ["trending", "movies", timeWindow],
     queryFn: () => tmdbAPI.getTrendingMovies(timeWindow),
   });
 }
 
-export function useTrendingTVShows(timeWindow: 'day' | 'week' = 'week') {
+export function useTrendingTVShows(timeWindow: "day" | "week" = "week") {
   return useQuery({
-    queryKey: ['trending', 'tv', timeWindow],
+    queryKey: ["trending", "tv", timeWindow],
     queryFn: () => tmdbAPI.getTrendingTVShows(timeWindow),
   });
 }
 
 export function usePopularMovies(page = 1) {
   return useQuery({
-    queryKey: ['movies', 'popular', page],
+    queryKey: ["movies", "popular", page],
     queryFn: () => tmdbAPI.getPopularMovies(page),
   });
 }
 
 export function usePopularTVShows(page = 1) {
   return useQuery({
-    queryKey: ['tv', 'popular', page],
+    queryKey: ["tv", "popular", page],
     queryFn: () => tmdbAPI.getPopularTVShows(page),
   });
 }
 
 export function useTopRatedMovies(page = 1) {
   return useQuery({
-    queryKey: ['movies', 'top-rated', page],
+    queryKey: ["movies", "top-rated", page],
     queryFn: () => tmdbAPI.getTopRatedMovies(page),
   });
 }
 
 export function useTopRatedTVShows(page = 1) {
   return useQuery({
-    queryKey: ['tv', 'top-rated', page],
+    queryKey: ["tv", "top-rated", page],
     queryFn: () => tmdbAPI.getTopRatedTVShows(page),
   });
 }
 
 export function useUpcomingMovies(page = 1) {
   return useQuery({
-    queryKey: ['movies', 'upcoming', page],
+    queryKey: ["movies", "upcoming", page],
     queryFn: () => tmdbAPI.getUpcomingMovies(page),
   });
 }
 
 export function useMovieDetails(movieId: number) {
   return useQuery({
-    queryKey: ['movie', movieId],
+    queryKey: ["movie", movieId],
     queryFn: () => tmdbAPI.getMovieDetails(movieId),
     enabled: !!movieId,
   });
@@ -60,7 +60,7 @@ export function useMovieDetails(movieId: number) {
 
 export function useTVShowDetails(tvId: number) {
   return useQuery({
-    queryKey: ['tv', tvId],
+    queryKey: ["tv", tvId],
     queryFn: () => tmdbAPI.getTVShowDetails(tvId),
     enabled: !!tvId,
   });
@@ -68,7 +68,7 @@ export function useTVShowDetails(tvId: number) {
 
 export function useMovieCredits(movieId: number) {
   return useQuery({
-    queryKey: ['movie', movieId, 'credits'],
+    queryKey: ["movie", movieId, "credits"],
     queryFn: () => tmdbAPI.getMovieCredits(movieId),
     enabled: !!movieId,
   });
@@ -76,7 +76,7 @@ export function useMovieCredits(movieId: number) {
 
 export function useMovieExternalIds(movieId: number) {
   return useQuery({
-    queryKey: ['movie', movieId, 'external_ids'],
+    queryKey: ["movie", movieId, "external_ids"],
     queryFn: () => tmdbAPI.getMovieExternalIds(movieId),
     enabled: !!movieId,
   });
@@ -84,7 +84,7 @@ export function useMovieExternalIds(movieId: number) {
 
 export function useTVShowCredits(tvId: number) {
   return useQuery({
-    queryKey: ['tv', tvId, 'credits'],
+    queryKey: ["tv", tvId, "credits"],
     queryFn: () => tmdbAPI.getTVShowCredits(tvId),
     enabled: !!tvId,
   });
@@ -92,7 +92,7 @@ export function useTVShowCredits(tvId: number) {
 
 export function useTVShowExternalIds(tvId: number) {
   return useQuery({
-    queryKey: ['tv', tvId, 'external_ids'],
+    queryKey: ["tv", tvId, "external_ids"],
     queryFn: () => tmdbAPI.getTVShowExternalIds(tvId),
     enabled: !!tvId,
   });
@@ -100,7 +100,7 @@ export function useTVShowExternalIds(tvId: number) {
 
 export function useSearchMulti(query: string, page = 1) {
   return useQuery({
-    queryKey: ['search', 'multi', query, page],
+    queryKey: ["search", "multi", query, page],
     queryFn: () => tmdbAPI.searchMulti(query, page),
     enabled: !!query.trim(),
   });
@@ -108,7 +108,7 @@ export function useSearchMulti(query: string, page = 1) {
 
 export function useMovieGenres() {
   return useQuery({
-    queryKey: ['genres', 'movies'],
+    queryKey: ["genres", "movies"],
     queryFn: () => tmdbAPI.getMovieGenres(),
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });
@@ -116,7 +116,7 @@ export function useMovieGenres() {
 
 export function useTVGenres() {
   return useQuery({
-    queryKey: ['genres', 'tv'],
+    queryKey: ["genres", "tv"],
     queryFn: () => tmdbAPI.getTVGenres(),
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });

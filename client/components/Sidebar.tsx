@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import {
   Home,
   Search,
@@ -9,19 +9,19 @@ import {
   History,
   Radio,
   Gamepad2,
-  Play
-} from 'lucide-react';
+  Play,
+} from "lucide-react";
 
 const navigation = [
-  { name: 'Home', href: '/', icon: Home },
-  { name: 'Search', href: '/search', icon: Search },
-  { name: 'Movies', href: '/movies', icon: Film },
-  { name: 'TV Shows', href: '/tv', icon: Tv },
-  { name: 'Anime', href: '/anime', icon: Gamepad2 },
-  { name: 'K-Drama', href: '/k-drama', icon: Play },
-  { name: 'Live TV', href: '/live-tv', icon: Radio },
-  { name: 'Watchlist', href: '/watchlist', icon: Heart },
-  { name: 'History', href: '/history', icon: History },
+  { name: "Home", href: "/", icon: Home },
+  { name: "Search", href: "/search", icon: Search },
+  { name: "Movies", href: "/movies", icon: Film },
+  { name: "TV Shows", href: "/tv", icon: Tv },
+  { name: "Anime", href: "/anime", icon: Gamepad2 },
+  { name: "K-Drama", href: "/k-drama", icon: Play },
+  { name: "Live TV", href: "/live-tv", icon: Radio },
+  { name: "Watchlist", href: "/watchlist", icon: Heart },
+  { name: "History", href: "/history", icon: History },
 ];
 
 export function Sidebar() {
@@ -48,17 +48,17 @@ export function Sidebar() {
                         to={item.href}
                         className={cn(
                           isActive
-                            ? 'bg-sidebar-accent text-sidebar-primary'
-                            : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary',
-                          'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors'
+                            ? "bg-sidebar-accent text-sidebar-primary"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary",
+                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors",
                         )}
                       >
                         <item.icon
                           className={cn(
                             isActive
-                              ? 'text-sidebar-primary'
-                              : 'text-sidebar-foreground group-hover:text-sidebar-primary',
-                            'h-6 w-6 shrink-0'
+                              ? "text-sidebar-primary"
+                              : "text-sidebar-foreground group-hover:text-sidebar-primary",
+                            "h-6 w-6 shrink-0",
                           )}
                           aria-hidden="true"
                         />

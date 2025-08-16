@@ -1,31 +1,31 @@
-import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import { Star, Calendar, Tv2, Heart, Play, Plus } from 'lucide-react';
-import { useTVShowDetails, useTVShowCredits } from '@/hooks/useTMDb';
-import { VideoPlayer } from '@/components/VideoPlayer';
-import { CastMember } from '@/components/CastMember';
-import { ScrollableRow } from '@/components/ScrollableRow';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { tmdbAPI } from '@/lib/tmdb';
-import { StorageManager } from '@/lib/storage';
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Star, Calendar, Tv2, Heart, Play, Plus } from "lucide-react";
+import { useTVShowDetails, useTVShowCredits } from "@/hooks/useTMDb";
+import { VideoPlayer } from "@/components/VideoPlayer";
+import { CastMember } from "@/components/CastMember";
+import { ScrollableRow } from "@/components/ScrollableRow";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { tmdbAPI } from "@/lib/tmdb";
+import { StorageManager } from "@/lib/storage";
 
 export default function TVDetail() {
   const { id } = useParams<{ id: string }>();
   const tvId = parseInt(id!);
-  
+
   const { data: tvShow, isLoading: tvLoading } = useTVShowDetails(tvId);
   const { data: credits, isLoading: creditsLoading } = useTVShowCredits(tvId);
-  
-  const isInWatchlist = tvId ? StorageManager.isInWatchlist(tvId, 'tv') : false;
+
+  const isInWatchlist = tvId ? StorageManager.isInWatchlist(tvId, "tv") : false;
 
   useEffect(() => {
     if (tvShow) {
       // Add to history when user visits the detail page
       StorageManager.addToHistory({
         id: tvShow.id,
-        type: 'tv',
+        type: "tv",
         title: tvShow.name,
         poster_path: tvShow.poster_path,
         release_date: tvShow.first_air_date,
@@ -36,13 +36,13 @@ export default function TVDetail() {
 
   const handleWatchlistToggle = () => {
     if (!tvShow) return;
-    
+
     if (isInWatchlist) {
-      StorageManager.removeFromWatchlist(tvShow.id, 'tv');
+      StorageManager.removeFromWatchlist(tvShow.id, "tv");
     } else {
       StorageManager.addToWatchlist({
         id: tvShow.id,
-        type: 'tv',
+        type: "tv",
         title: tvShow.name,
         poster_path: tvShow.poster_path,
         release_date: tvShow.first_air_date,
@@ -75,7 +75,9 @@ export default function TVDetail() {
   if (!tvShow) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-foreground">TV Show not found</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          TV Show not found
+        </h1>
         <p className="text-muted-foreground mt-2">
           The TV show you're looking for doesn't exist or has been removed.
         </p>
@@ -83,7 +85,9 @@ export default function TVDetail() {
     );
   }
 
-  const firstAirYear = tvShow.first_air_date ? new Date(tvShow.first_air_date).getFullYear() : null;
+  const firstAirYear = tvShow.first_air_date
+    ? new Date(tvShow.first_air_date).getFullYear()
+    : null;
 
   return (
     <div className="space-y-8">
@@ -91,47 +95,54 @@ export default function TVDetail() {
       <div className="relative">
         <div className="aspect-video w-full overflow-hidden rounded-lg">
           <img
-            src={tmdbAPI.getBackdropURL(tvShow.backdrop_path, 'w1280')}
+            src={tmdbAPI.getBackdropURL(tvShow.backdrop_path, "w1280")}
             alt={tvShow.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
         </div>
-        
+
         <div className="absolute bottom-6 left-6 right-6">
           <div className="flex flex-col lg:flex-row lg:items-end gap-6">
             <div className="hidden lg:block">
               <img
-                src={tmdbAPI.getImageURL(tvShow.poster_path, 'w400')}
+                src={tmdbAPI.getImageURL(tvShow.poster_path, "w400")}
                 alt={tvShow.name}
                 className="w-48 rounded-lg shadow-lg"
               />
             </div>
-            
+
             <div className="flex-1 text-white">
-              <h1 className="text-4xl lg:text-5xl font-bold mb-2">{tvShow.name}</h1>
-              
+              <h1 className="text-4xl lg:text-5xl font-bold mb-2">
+                {tvShow.name}
+              </h1>
+
               <div className="flex flex-wrap items-center gap-4 mb-4">
                 <div className="flex items-center space-x-1">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold">{tvShow.vote_average.toFixed(1)}</span>
+                  <span className="font-semibold">
+                    {tvShow.vote_average.toFixed(1)}
+                  </span>
                 </div>
-                
+
                 {firstAirYear && (
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-5 w-5" />
                     <span>{firstAirYear}</span>
                   </div>
                 )}
-                
+
                 {tvShow.number_of_seasons && (
                   <div className="flex items-center space-x-1">
                     <Tv2 className="h-5 w-5" />
-                    <span>{tvShow.number_of_seasons} Season{tvShow.number_of_seasons !== 1 ? 's' : ''}</span>
+                    <span>
+                      {tvShow.number_of_seasons} Season
+                      {tvShow.number_of_seasons !== 1 ? "s" : ""}
+                    </span>
                   </div>
                 )}
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mb-6">
                 {tvShow.genres?.map((genre) => (
                   <Badge key={genre.id} variant="secondary">
@@ -139,7 +150,7 @@ export default function TVDetail() {
                   </Badge>
                 ))}
               </div>
-              
+
               <div className="flex gap-3">
                 <Button size="lg" className="gap-2">
                   <Play className="h-5 w-5" />
@@ -175,7 +186,9 @@ export default function TVDetail() {
         <div className="lg:col-span-2 space-y-8">
           {/* Video Player */}
           <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4">Watch {tvShow.name}</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Watch {tvShow.name}
+            </h2>
             <VideoPlayer
               tmdbId={tvShow.id}
               type="tv"
@@ -187,9 +200,11 @@ export default function TVDetail() {
 
           {/* Overview */}
           <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4">Overview</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Overview
+            </h2>
             <p className="text-muted-foreground leading-relaxed">
-              {tvShow.overview || 'No overview available for this TV show.'}
+              {tvShow.overview || "No overview available for this TV show."}
             </p>
           </section>
 
@@ -211,7 +226,7 @@ export default function TVDetail() {
           {/* Mobile Poster */}
           <div className="lg:hidden">
             <img
-              src={tmdbAPI.getImageURL(tvShow.poster_path, 'w500')}
+              src={tmdbAPI.getImageURL(tvShow.poster_path, "w500")}
               alt={tvShow.name}
               className="w-full max-w-sm mx-auto rounded-lg shadow-lg"
             />
@@ -219,40 +234,54 @@ export default function TVDetail() {
 
           {/* TV Show Details */}
           <div className="bg-card p-6 rounded-lg border">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Show Details</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              Show Details
+            </h3>
             <div className="space-y-3 text-sm">
               <div>
                 <span className="text-muted-foreground">First Air Date:</span>
                 <span className="ml-2 text-foreground">
-                  {tvShow.first_air_date ? new Date(tvShow.first_air_date).toLocaleDateString() : 'N/A'}
+                  {tvShow.first_air_date
+                    ? new Date(tvShow.first_air_date).toLocaleDateString()
+                    : "N/A"}
                 </span>
               </div>
-              
+
               {tvShow.number_of_seasons && (
                 <div>
                   <span className="text-muted-foreground">Seasons:</span>
-                  <span className="ml-2 text-foreground">{tvShow.number_of_seasons}</span>
+                  <span className="ml-2 text-foreground">
+                    {tvShow.number_of_seasons}
+                  </span>
                 </div>
               )}
-              
+
               {tvShow.number_of_episodes && (
                 <div>
                   <span className="text-muted-foreground">Episodes:</span>
-                  <span className="ml-2 text-foreground">{tvShow.number_of_episodes}</span>
+                  <span className="ml-2 text-foreground">
+                    {tvShow.number_of_episodes}
+                  </span>
                 </div>
               )}
-              
+
               <div>
                 <span className="text-muted-foreground">Rating:</span>
-                <span className="ml-2 text-foreground">{tvShow.vote_average.toFixed(1)}/10</span>
+                <span className="ml-2 text-foreground">
+                  {tvShow.vote_average.toFixed(1)}/10
+                </span>
               </div>
-              
+
               {tvShow.genres && tvShow.genres.length > 0 && (
                 <div>
                   <span className="text-muted-foreground">Genres:</span>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {tvShow.genres.map((genre) => (
-                      <Badge key={genre.id} variant="outline" className="text-xs">
+                      <Badge
+                        key={genre.id}
+                        variant="outline"
+                        className="text-xs"
+                      >
                         {genre.name}
                       </Badge>
                     ))}

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Heart, Trash2, Star, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { StorageManager, WatchlistItem } from '@/lib/storage';
-import { tmdbAPI } from '@/lib/tmdb';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Heart, Trash2, Star, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { StorageManager, WatchlistItem } from "@/lib/storage";
+import { tmdbAPI } from "@/lib/tmdb";
 
 export default function Watchlist() {
   const [watchlistItems, setWatchlistItems] = useState<WatchlistItem[]>([]);
@@ -18,16 +18,16 @@ export default function Watchlist() {
     setWatchlistItems([]);
   };
 
-  const removeItem = (id: number, type: 'movie' | 'tv') => {
+  const removeItem = (id: number, type: "movie" | "tv") => {
     StorageManager.removeFromWatchlist(id, type);
     setWatchlistItems(StorageManager.getWatchlist());
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -35,9 +35,12 @@ export default function Watchlist() {
     return (
       <div className="text-center py-12">
         <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h1 className="text-3xl font-bold text-foreground mb-2">Your Watchlist is Empty</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Your Watchlist is Empty
+        </h1>
         <p className="text-muted-foreground mb-6">
-          Add movies and TV shows to your watchlist to keep track of what you want to watch.
+          Add movies and TV shows to your watchlist to keep track of what you
+          want to watch.
         </p>
         <Link to="/">
           <Button>Browse Content</Button>
@@ -52,10 +55,15 @@ export default function Watchlist() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">My Watchlist</h1>
           <p className="text-muted-foreground mt-2">
-            {watchlistItems.length} item{watchlistItems.length !== 1 ? 's' : ''} saved
+            {watchlistItems.length} item{watchlistItems.length !== 1 ? "s" : ""}{" "}
+            saved
           </p>
         </div>
-        <Button variant="destructive" onClick={clearWatchlist} className="gap-2">
+        <Button
+          variant="destructive"
+          onClick={clearWatchlist}
+          className="gap-2"
+        >
           <Trash2 className="h-4 w-4" />
           Clear Watchlist
         </Button>
@@ -70,7 +78,7 @@ export default function Watchlist() {
             <Link to={`/${item.type}/${item.id}`} className="block">
               <div className="aspect-[2/3] overflow-hidden">
                 <img
-                  src={tmdbAPI.getImageURL(item.poster_path, 'w400')}
+                  src={tmdbAPI.getImageURL(item.poster_path, "w400")}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -87,9 +95,9 @@ export default function Watchlist() {
 
               <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                 <Badge variant="outline" className="text-xs">
-                  {item.type === 'movie' ? 'Movie' : 'TV Show'}
+                  {item.type === "movie" ? "Movie" : "TV Show"}
                 </Badge>
-                
+
                 <div className="flex items-center gap-1">
                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                   <span>{item.vote_average.toFixed(1)}</span>
@@ -100,10 +108,12 @@ export default function Watchlist() {
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    {item.release_date ? new Date(item.release_date).getFullYear() : 'N/A'}
+                    {item.release_date
+                      ? new Date(item.release_date).getFullYear()
+                      : "N/A"}
                   </span>
                 </div>
-                
+
                 <span>Added {formatDate(item.addedAt)}</span>
               </div>
             </div>

@@ -1,23 +1,29 @@
-import { useState, useEffect, useRef } from 'react';
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Maximize, 
+import { useState, useEffect, useRef } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
   Subtitles,
   Monitor,
   Cast,
-  Minimize
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { tmdbAPI } from '@/lib/tmdb';
+  Minimize,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { tmdbAPI } from "@/lib/tmdb";
 
 interface VideoPlayerProps {
   tmdbId: number;
-  type: 'movie' | 'tv';
+  type: "movie" | "tv";
   season?: number;
   episode?: number;
   title: string;
@@ -26,118 +32,130 @@ interface VideoPlayerProps {
 interface VideoSource {
   name: string;
   requiresImdb?: boolean;
-  getUrl: (tmdbId: number, imdbId: string | null, type: 'movie' | 'tv', season?: number, episode?: number) => string;
+  getUrl: (
+    tmdbId: number,
+    imdbId: string | null,
+    type: "movie" | "tv",
+    season?: number,
+    episode?: number,
+  ) => string;
 }
 
 const VIDEO_SOURCES: VideoSource[] = [
   {
-    name: 'VidSrc',
+    name: "VidSrc",
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (type === 'movie') {
+      if (type === "movie") {
         return `https://vidsrc.to/embed/movie/${tmdbId}`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`;
       } else {
         return `https://vidsrc.to/embed/tv/${tmdbId}`;
       }
-    }
+    },
   },
   {
-    name: 'VidSrc CC',
+    name: "VidSrc CC",
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (type === 'movie') {
+      if (type === "movie") {
         return `https://vidsrc.cc/v2/embed/movie/${tmdbId}?autoPlay=true`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://vidsrc.cc/v2/embed/tv/${tmdbId}/${season}/${episode}?autoPlay=true`;
       } else {
         return `https://vidsrc.cc/v2/embed/tv/${tmdbId}?autoPlay=true`;
       }
-    }
+    },
   },
   {
-    name: 'VidSrc Co',
+    name: "VidSrc Co",
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (type === 'movie') {
+      if (type === "movie") {
         return `https://player.vidsrc.co/embed/movie/${tmdbId}?server=1`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://player.vidsrc.co/embed/tv/${tmdbId}/${season}/${episode}?server=1`;
       } else {
         return `https://player.vidsrc.co/embed/tv/${tmdbId}?server=1`;
       }
-    }
+    },
   },
   {
-    name: 'RG Shows',
+    name: "RG Shows",
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (type === 'movie') {
+      if (type === "movie") {
         return `https://embed.rgshows.me/movie/${tmdbId}`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://embed.rgshows.me/tv/${tmdbId}/${season}/${episode}`;
       } else {
         return `https://embed.rgshows.me/tv/${tmdbId}`;
       }
-    }
+    },
   },
   {
-    name: 'MKV Embed',
+    name: "MKV Embed",
     requiresImdb: true,
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (!imdbId) return '';
-      if (type === 'movie') {
+      if (!imdbId) return "";
+      if (type === "movie") {
         return `https://mkvembed.com/embed/movie?imdb=${imdbId}`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://mkvembed.com/embed/tv?imdb=${imdbId}&s=${season}&e=${episode}`;
       } else {
         return `https://mkvembed.com/embed/tv?imdb=${imdbId}`;
       }
-    }
+    },
   },
   {
-    name: 'VidSrc Online',
+    name: "VidSrc Online",
     requiresImdb: true,
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (!imdbId) return '';
-      if (type === 'movie') {
+      if (!imdbId) return "";
+      if (type === "movie") {
         return `https://vidsrc.online/embed/movie?imdb=${imdbId}`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://vidsrc.online/embed/tv?imdb=${imdbId}&s=${season}&e=${episode}`;
       } else {
         return `https://vidsrc.online/embed/tv?imdb=${imdbId}`;
       }
-    }
+    },
   },
   {
-    name: 'Auto Embed',
+    name: "Auto Embed",
     requiresImdb: true,
     getUrl: (tmdbId, imdbId, type, season, episode) => {
-      if (!imdbId) return '';
-      if (type === 'movie') {
+      if (!imdbId) return "";
+      if (type === "movie") {
         return `https://autoembed.online/embed/movie/${imdbId}`;
-      } else if (type === 'tv' && season && episode) {
+      } else if (type === "tv" && season && episode) {
         return `https://autoembed.online/embed/tv/${imdbId}/${season}/${episode}`;
       } else {
         return `https://autoembed.online/embed/tv/${imdbId}`;
       }
-    }
-  }
+    },
+  },
 ];
 
-const QUALITY_OPTIONS = ['Auto', '360p', '720p', '1080p'];
-const SPEED_OPTIONS = ['0.5x', '0.75x', '1x', '1.25x', '1.5x', '2x'];
+const QUALITY_OPTIONS = ["Auto", "360p", "720p", "1080p"];
+const SPEED_OPTIONS = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x"];
 
-export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlayerProps) {
+export function VideoPlayer({
+  tmdbId,
+  type,
+  season,
+  episode,
+  title,
+}: VideoPlayerProps) {
   const [currentSource, setCurrentSource] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [volume, setVolume] = useState([100]);
   const [isMuted, setIsMuted] = useState(false);
-  const [quality, setQuality] = useState('Auto');
-  const [speed, setSpeed] = useState('1x');
+  const [quality, setQuality] = useState("Auto");
+  const [speed, setSpeed] = useState("1x");
   const [subtitlesEnabled, setSubtitlesEnabled] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [imdbId, setImdbId] = useState<string | null>(null);
-  
+
   const playerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
@@ -146,15 +164,16 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   useEffect(() => {
     const fetchImdbId = async () => {
       try {
-        const externalIds = type === 'movie' 
-          ? await tmdbAPI.getMovieExternalIds(tmdbId)
-          : await tmdbAPI.getTVShowExternalIds(tmdbId);
-        
+        const externalIds =
+          type === "movie"
+            ? await tmdbAPI.getMovieExternalIds(tmdbId)
+            : await tmdbAPI.getTVShowExternalIds(tmdbId);
+
         if (externalIds?.imdb_id) {
           setImdbId(externalIds.imdb_id);
         }
       } catch (error) {
-        console.error('Failed to fetch IMDB ID:', error);
+        console.error("Failed to fetch IMDB ID:", error);
       }
     };
 
@@ -167,17 +186,20 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   // Get available sources (filter out IMDB-required sources if no IMDB ID)
-  const availableSources = VIDEO_SOURCES.filter(source => 
-    !source.requiresImdb || (source.requiresImdb && imdbId)
+  const availableSources = VIDEO_SOURCES.filter(
+    (source) => !source.requiresImdb || (source.requiresImdb && imdbId),
   );
 
-  const currentSourceData = availableSources[currentSource] || availableSources[0];
-  const embedUrl = currentSourceData?.getUrl(tmdbId, imdbId, type, season, episode) || '';
+  const currentSourceData =
+    availableSources[currentSource] || availableSources[0];
+  const embedUrl =
+    currentSourceData?.getUrl(tmdbId, imdbId, type, season, episode) || "";
 
   const switchSource = (sourceIndex: number) => {
     if (sourceIndex < availableSources.length) {
@@ -201,7 +223,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
 
   const toggleFullscreen = () => {
     if (!playerRef.current) return;
-    
+
     if (!document.fullscreenElement) {
       playerRef.current.requestFullscreen();
       setIsFullscreen(true);
@@ -212,11 +234,11 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   };
 
   const togglePictureInPicture = async () => {
-    console.log('Picture-in-Picture requested');
+    console.log("Picture-in-Picture requested");
   };
 
   const castToDevice = () => {
-    console.log('Casting to device...');
+    console.log("Casting to device...");
   };
 
   const showControlsTemporarily = () => {
@@ -240,7 +262,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
           <div className="text-white text-center">
             <p className="mb-2">No compatible video sources available</p>
             <p className="text-sm text-white/60">
-              {!imdbId && 'IMDB ID required for some sources'}
+              {!imdbId && "IMDB ID required for some sources"}
             </p>
           </div>
         </div>
@@ -249,7 +271,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
   }
 
   return (
-    <div 
+    <div
       ref={playerRef}
       className="relative w-full bg-black rounded-lg overflow-hidden group"
       onMouseMove={handleMouseMove}
@@ -266,8 +288,8 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 onClick={() => switchSource(index)}
                 className={`px-3 py-1 text-xs rounded transition-colors whitespace-nowrap ${
                   currentSource === index
-                    ? 'bg-white text-black'
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? "bg-white text-black"
+                    : "bg-white/20 text-white hover:bg-white/30"
                 }`}
               >
                 {source.name}
@@ -284,9 +306,14 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
             <div className="text-white text-center">
               <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-lg font-medium">Loading {currentSourceData.name}...</p>
+              <p className="text-lg font-medium">
+                Loading {currentSourceData.name}...
+              </p>
               <div className="w-64 bg-white/20 rounded-full h-1 mt-2">
-                <div className="bg-white h-1 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                <div
+                  className="bg-white h-1 rounded-full animate-pulse"
+                  style={{ width: "60%" }}
+                ></div>
               </div>
             </div>
           </div>
@@ -306,11 +333,16 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
         />
 
         {/* Custom Player Controls Overlay */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-3 sm:p-6 transition-opacity duration-300 ${showControls || isLoading ? 'opacity-100' : 'opacity-0'}`}>
+        <div
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-3 sm:p-6 transition-opacity duration-300 ${showControls || isLoading ? "opacity-100" : "opacity-0"}`}
+        >
           {/* Progress Bar */}
           <div className="mb-4">
             <div className="w-full bg-white/20 rounded-full h-1 cursor-pointer">
-              <div className="bg-white h-1 rounded-full" style={{ width: '30%' }}></div>
+              <div
+                className="bg-white h-1 rounded-full"
+                style={{ width: "30%" }}
+              ></div>
             </div>
           </div>
 
@@ -324,7 +356,11 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 onClick={togglePlay}
                 className="text-white hover:bg-white/20"
               >
-                {isPlaying ? <Pause className="h-4 w-4 sm:h-5 sm:w-5" /> : <Play className="h-4 w-4 sm:h-5 sm:w-5" />}
+                {isPlaying ? (
+                  <Pause className="h-4 w-4 sm:h-5 sm:w-5" />
+                ) : (
+                  <Play className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
               </Button>
 
               <div className="flex items-center space-x-2">
@@ -334,7 +370,11 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                   onClick={toggleMute}
                   className="text-white hover:bg-white/20"
                 >
-                  {isMuted || volume[0] === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  {isMuted || volume[0] === 0 ? (
+                    <VolumeX className="h-4 w-4" />
+                  ) : (
+                    <Volume2 className="h-4 w-4" />
+                  )}
                 </Button>
                 <div className="w-16 sm:w-20 hidden sm:block">
                   <Slider
@@ -361,7 +401,9 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 </SelectTrigger>
                 <SelectContent>
                   {QUALITY_OPTIONS.map((q) => (
-                    <SelectItem key={q} value={q}>{q}</SelectItem>
+                    <SelectItem key={q} value={q}>
+                      {q}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -373,7 +415,9 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 </SelectTrigger>
                 <SelectContent>
                   {SPEED_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -383,7 +427,7 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 variant="ghost"
                 size="sm"
                 onClick={() => setSubtitlesEnabled(!subtitlesEnabled)}
-                className={`text-white hover:bg-white/20 ${subtitlesEnabled ? 'bg-white/20' : ''}`}
+                className={`text-white hover:bg-white/20 ${subtitlesEnabled ? "bg-white/20" : ""}`}
               >
                 <Subtitles className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
@@ -414,9 +458,15 @@ export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlaye
                 size="sm"
                 onClick={toggleFullscreen}
                 className="text-white hover:bg-white/20"
-                title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen (F)'}
+                title={
+                  isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen (F)"
+                }
               >
-                {isFullscreen ? <Minimize className="h-3 w-3 sm:h-4 sm:w-4" /> : <Maximize className="h-3 w-3 sm:h-4 sm:w-4" />}
+                {isFullscreen ? (
+                  <Minimize className="h-3 w-3 sm:h-4 sm:w-4" />
+                ) : (
+                  <Maximize className="h-3 w-3 sm:h-4 sm:w-4" />
+                )}
               </Button>
             </div>
           </div>

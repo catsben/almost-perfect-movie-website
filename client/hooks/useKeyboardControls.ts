@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface KeyboardControlsProps {
   onTogglePlay: () => void;
@@ -19,47 +19,50 @@ export function useKeyboardControls({
   onVolumeDown,
   onSeekForward,
   onSeekBackward,
-  isEnabled = true
+  isEnabled = true,
 }: KeyboardControlsProps) {
   useEffect(() => {
     if (!isEnabled) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't trigger if user is typing in an input
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
         return;
       }
 
       switch (event.code) {
-        case 'Space':
+        case "Space":
           event.preventDefault();
           onTogglePlay();
           break;
-        case 'KeyF':
+        case "KeyF":
           event.preventDefault();
           onToggleFullscreen();
           break;
-        case 'KeyM':
+        case "KeyM":
           event.preventDefault();
           onToggleMute();
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           event.preventDefault();
           onVolumeUp();
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           event.preventDefault();
           onVolumeDown();
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           event.preventDefault();
           onSeekForward();
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           event.preventDefault();
           onSeekBackward();
           break;
-        case 'Escape':
+        case "Escape":
           // Exit fullscreen if active
           if (document.fullscreenElement) {
             document.exitFullscreen();
@@ -68,10 +71,10 @@ export function useKeyboardControls({
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [
     onTogglePlay,
@@ -81,6 +84,6 @@ export function useKeyboardControls({
     onVolumeDown,
     onSeekForward,
     onSeekBackward,
-    isEnabled
+    isEnabled,
   ]);
 }
