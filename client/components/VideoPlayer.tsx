@@ -482,7 +482,6 @@ export function VideoPlayer({
           </div>
         </div>
       </div>
-
     </div>
   );
 }
