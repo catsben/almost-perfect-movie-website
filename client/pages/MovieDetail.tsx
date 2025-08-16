@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Star, Calendar, Clock, Heart, Play, Plus } from 'lucide-react';
 import { useMovieDetails, useMovieCredits } from '@/hooks/useTMDb';
-import { VideoPlayer } from '@/components/VideoPlayer';
+import { VideoPlayerSimple as VideoPlayer } from '@/components/VideoPlayerSimple';
 import { CastMember } from '@/components/CastMember';
 import { ScrollableRow } from '@/components/ScrollableRow';
 import { Button } from '@/components/ui/button';
