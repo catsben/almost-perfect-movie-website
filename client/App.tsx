@@ -12,6 +12,13 @@ import NotFound from "./pages/NotFound";
 import { Placeholder } from "./pages/Placeholder";
 import MovieDetail from "./pages/MovieDetail";
 import TVDetail from "./pages/TVDetail";
+import Search from "./pages/Search";
+import Movies from "./pages/Movies";
+import TVShows from "./pages/TVShows";
+import Anime from "./pages/Anime";
+import KDrama from "./pages/KDrama";
+import Watchlist from "./pages/Watchlist";
+import History from "./pages/History";
 import { queryClient } from "./lib/query-client";
 
 const App = () => (
@@ -23,14 +30,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
-            <Route path="search" element={<Placeholder title="Search" />} />
-            <Route path="movies" element={<Placeholder title="Movies" />} />
-            <Route path="tv" element={<Placeholder title="TV Shows" />} />
-            <Route path="anime" element={<Placeholder title="Anime" />} />
-            <Route path="k-drama" element={<Placeholder title="K-Drama" />} />
+            <Route path="search" element={<Search />} />
+            <Route path="movies" element={<Movies />} />
+            <Route path="tv" element={<TVShows />} />
+            <Route path="anime" element={<Anime />} />
+            <Route path="k-drama" element={<KDrama />} />
             <Route path="live-tv" element={<Placeholder title="Live TV" />} />
-            <Route path="watchlist" element={<Placeholder title="Watchlist" />} />
-            <Route path="history" element={<Placeholder title="History" />} />
+            <Route path="watchlist" element={<Watchlist />} />
+            <Route path="history" element={<History />} />
             <Route path="movie/:id" element={<MovieDetail />} />
             <Route path="tv/:id" element={<TVDetail />} />
             <Route path="*" element={<NotFound />} />
