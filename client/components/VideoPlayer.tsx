@@ -273,10 +273,7 @@ export function VideoPlayer({
   return (
     <div
       ref={playerRef}
-      className="relative w-full bg-black rounded-lg overflow-hidden group"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
+      className="relative w-full bg-black rounded-lg overflow-hidden"
     >
       {/* Source Selection */}
       <div className="absolute top-4 right-4 z-20">
@@ -486,17 +483,6 @@ export function VideoPlayer({
         </div>
       </div>
 
-      {/* Mobile-friendly keyboard shortcuts info */}
-      <div className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-2 text-xs text-white">
-          <div className="space-y-1">
-            <div>Space: Play/Pause</div>
-            <div>F: Fullscreen</div>
-            <div>M: Mute</div>
-            <div>↑/↓: Volume</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
