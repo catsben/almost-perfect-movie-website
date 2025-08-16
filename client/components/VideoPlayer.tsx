@@ -6,17 +6,51 @@ interface VideoPlayerProps {
   title: string;
 }
 
-export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlayerProps) {
-  // Construct VidSrc URL based on type
-  let embedUrl = '';
-  
-  if (type === 'movie') {
-    embedUrl = `https://vidsrc.to/embed/movie/${tmdbId}`;
-  } else if (type === 'tv' && season && episode) {
-    embedUrl = `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`;
-  } else {
-    embedUrl = `https://vidsrc.to/embed/tv/${tmdbId}`;
+const VIDEO_SOURCES = [
+  {
+    name: 'VidSrc',
+    getUrl: (tmdbId: number, type: 'movie' | 'tv', season?: number, episode?: number) => {
+      if (type === 'movie') {
+        return `https://vidsrc.to/embed/movie/${tmdbId}`;
+      } else if (type === 'tv' && season && episode) {
+        return `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`;
+      } else {
+        return `https://vidsrc.to/embed/tv/${tmdbId}`;
+      }
+    }
+  },
+  {
+    name: 'Movie4K',
+    getUrl: (tmdbId: number, type: 'movie' | 'tv', season?: number, episode?: number) => {
+      if (type === 'movie') {
+        return `https://movie4k.to/embed/movie/${tmdbId}`;
+      } else if (type === 'tv' && season && episode) {
+        return `https://movie4k.to/embed/tv/${tmdbId}/${season}/${episode}`;
+      } else {
+        return `https://movie4k.to/embed/tv/${tmdbId}`;
+      }
+    }
+  },
+  {
+    name: 'VidSrc Pro',
+    getUrl: (tmdbId: number, type: 'movie' | 'tv', season?: number, episode?: number) => {
+      if (type === 'movie') {
+        return `https://vidsrc.pro/embed/movie/${tmdbId}`;
+      } else if (type === 'tv' && season && episode) {
+        return `https://vidsrc.pro/embed/tv/${tmdbId}/${season}/${episode}`;
+      } else {
+        return `https://vidsrc.pro/embed/tv/${tmdbId}`;
+      }
+    }
   }
+];
+
+export function VideoPlayer({ tmdbId, type, season, episode, title }: VideoPlayerProps) {
+  const [currentSource, setCurrentSource] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const currentSourceData = VIDEO_SOURCES[currentSource];
+  const embedUrl = currentSourceData.getUrl(tmdbId, type, season, episode);
 
   return (
     <div className="relative w-full bg-black rounded-lg overflow-hidden">
