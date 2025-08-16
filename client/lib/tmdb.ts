@@ -86,6 +86,10 @@ class TMDbAPI {
     return this.fetchAPI(`/movie/${movieId}/credits`);
   }
 
+  async getMovieExternalIds(movieId: number) {
+    return this.fetchAPI(`/movie/${movieId}/external_ids`);
+  }
+
   // TV Show endpoints
   async getTrendingTVShows(timeWindow: 'day' | 'week' = 'week') {
     return this.fetchAPI(`/trending/tv/${timeWindow}`);
@@ -105,6 +109,10 @@ class TMDbAPI {
 
   async getTVShowCredits(tvId: number): Promise<Credits> {
     return this.fetchAPI(`/tv/${tvId}/credits`);
+  }
+
+  async getTVShowExternalIds(tvId: number) {
+    return this.fetchAPI(`/tv/${tvId}/external_ids`);
   }
 
   // Search endpoints
