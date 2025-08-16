@@ -1,62 +1,100 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { Section } from '@/components/Section';
+import { ScrollableRow } from '@/components/ScrollableRow';
+import { MovieCard } from '@/components/MovieCard';
+import { useTrendingMovies, useTrendingTVShows, usePopularMovies, usePopularTVShows } from '@/hooks/useTMDb';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function LoadingSkeleton() {
+  return (
+    <div className="flex space-x-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="min-w-[200px]">
+          <Skeleton className="aspect-[2/3] w-full rounded-lg" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
-
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
-  };
+  const { data: trendingMovies, isLoading: loadingTrendingMovies } = useTrendingMovies();
+  const { data: trendingTV, isLoading: loadingTrendingTV } = useTrendingTVShows();
+  const { data: popularMovies, isLoading: loadingPopularMovies } = usePopularMovies();
+  const { data: popularTV, isLoading: loadingPopularTV } = usePopularTVShows();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="relative mb-12">
+        <div className="text-center py-12 bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg">
+          <h1 className="text-5xl font-bold text-foreground mb-4">
+            StreamFlix
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Discover and stream your favorite movies and TV shows
+          </p>
+        </div>
       </div>
+
+      {/* Trending Movies */}
+      <Section title="Trending Movies" viewAllLink="/movies">
+        {loadingTrendingMovies ? (
+          <LoadingSkeleton />
+        ) : (
+          <ScrollableRow>
+            {trendingMovies?.results?.map((movie: any) => (
+              <div key={movie.id} className="min-w-[200px]">
+                <MovieCard item={movie} type="movie" />
+              </div>
+            ))}
+          </ScrollableRow>
+        )}
+      </Section>
+
+      {/* Trending TV Shows */}
+      <Section title="Trending TV Shows" viewAllLink="/tv">
+        {loadingTrendingTV ? (
+          <LoadingSkeleton />
+        ) : (
+          <ScrollableRow>
+            {trendingTV?.results?.map((show: any) => (
+              <div key={show.id} className="min-w-[200px]">
+                <MovieCard item={show} type="tv" />
+              </div>
+            ))}
+          </ScrollableRow>
+        )}
+      </Section>
+
+      {/* Popular Movies */}
+      <Section title="Popular Movies" viewAllLink="/movies">
+        {loadingPopularMovies ? (
+          <LoadingSkeleton />
+        ) : (
+          <ScrollableRow>
+            {popularMovies?.results?.map((movie: any) => (
+              <div key={movie.id} className="min-w-[200px]">
+                <MovieCard item={movie} type="movie" />
+              </div>
+            ))}
+          </ScrollableRow>
+        )}
+      </Section>
+
+      {/* Popular TV Shows */}
+      <Section title="Popular TV Shows" viewAllLink="/tv">
+        {loadingPopularTV ? (
+          <LoadingSkeleton />
+        ) : (
+          <ScrollableRow>
+            {popularTV?.results?.map((show: any) => (
+              <div key={show.id} className="min-w-[200px]">
+                <MovieCard item={show} type="tv" />
+              </div>
+            ))}
+          </ScrollableRow>
+        )}
+      </Section>
     </div>
   );
 }
